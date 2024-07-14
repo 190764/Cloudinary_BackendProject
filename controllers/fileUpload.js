@@ -124,7 +124,7 @@ exports.videoUpload = async (req,res) => {
 
           //file format supported hai
         console.log("Uploading to Codehelp");
-        const response = await uploadFileToCloudinary(file, process.env.IMG_FOLDER);
+        const response = await uploadFileToCloudinary(file, process.env.VID_FOLDER);
         console.log(response);
 
         //db me entry save krni h
