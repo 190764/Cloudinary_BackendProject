@@ -1,7 +1,6 @@
 const File = require("../models/File");
 const cloudinary = require("cloudinary").v2;
 
-
 //localfileupload -> handler function
 
 exports.localFileUpload = async (req, res) => {
@@ -9,7 +8,7 @@ exports.localFileUpload = async (req, res) => {
 
         //fetch filefrom request
         const file = req.files.file;
-        console.log("FILE AAGYI JEE -> ",file);
+        console.log("FILE RECEIVED -> ",file);
 
 
         //create path where file need to be stored on server
@@ -74,7 +73,7 @@ exports.imageUpload = async (req, res) => {
 
         //file format supported hai
         console.log("Uploading to Codehelp");
-        const response = await uploadFileToCloudinary(file, "Codehelp");
+        const response = await uploadFileToCloudinary(file, process.env.IMG_FOLDER);
         console.log(response);
 
         //db me entry save krni h
@@ -97,7 +96,6 @@ exports.imageUpload = async (req, res) => {
             success:false,
             message:'Something went wrong',
         });
-
     }
 }
 
@@ -126,7 +124,7 @@ exports.videoUpload = async (req,res) => {
 
           //file format supported hai
         console.log("Uploading to Codehelp");
-        const response = await uploadFileToCloudinary(file, "Codehelp");
+        const response = await uploadFileToCloudinary(file, process.env.IMG_FOLDER);
         console.log(response);
 
         //db me entry save krni h
@@ -180,7 +178,7 @@ exports.imageSizeReducer = async (req,res) => {
         //file format supported hai
         console.log("Uploading to Codehelp");
         //TODO: height attribute-> COMPRESS
-        const response = await uploadFileToCloudinary(file, "Codehelp", 90);
+        const response = await uploadFileToCloudinary(file, process.env.IMG_FOLDER, 90);
         console.log(response);
 
         //db me entry save krni h
@@ -203,5 +201,20 @@ exports.imageSizeReducer = async (req,res) => {
             success:false,
             message:'Something went wrong',
         })
+    }
+}
+
+exports.getAllImage = async (req, res) => {
+    const email = req.params.email;
+
+    if (!email) {
+        return res.status(400).send("Email query parameter is required");
+    }
+
+    try {
+        const files = await File.find({ email: email }).select("-_id");
+        res.status(200).json(files);
+    } catch (err) {
+        res.status(500).send("Internal Server Error");
     }
 }
